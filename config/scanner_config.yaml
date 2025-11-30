@@ -1,0 +1,202 @@
+# VulnWebScanner Configuration File
+
+# General Settings
+general:
+  scanner_name: "VulnWebScanner"
+  version: "1.0.0"
+  user_agent: "VulnWebScanner/1.0 (Security Research)"
+  timeout: 30
+  max_retries: 3
+  verbose: true
+
+# Performance Settings
+performance:
+  max_concurrent_requests: 50
+  request_delay: 0.5  # seconds between requests
+  rate_limit: 100  # requests per minute
+  thread_pool_size: 10
+  async_workers: 20
+
+# Database Configuration
+database:
+  engine: "sqlite"  # sqlite, postgresql, mysql
+  path: "data/scanner.db"
+  pool_size: 10
+  max_overflow: 20
+  echo: false
+
+# Redis Cache
+redis:
+  enabled: true
+  host: "localhost"
+  port: 6379
+  db: 0
+  ttl: 3600  # cache TTL in seconds
+
+# Reconnaissance Settings
+recon:
+  passive:
+    enabled: true
+    subdomain_enum:
+      sources: ["crtsh", "virustotal", "threatcrowd", "dnsdumpster"]
+      max_subdomains: 1000
+    asset_discovery:
+      shodan_enabled: false
+      censys_enabled: false
+    tech_detection:
+      enabled: true
+      javascript_analysis: true
+  
+  active:
+    enabled: true
+    port_scan:
+      enabled: true
+      ports: "80,443,8080,8443,3000,5000,8000"
+      scan_type: "connect"  # syn, connect, ack
+    crawler:
+      enabled: true
+      max_depth: 3
+      max_urls: 500
+      javascript_rendering: true
+      respect_robots: true
+    directory_brute:
+      enabled: true
+      wordlist: "utils/wordlists/common_dirs.txt"
+      extensions: [".php", ".asp", ".aspx", ".jsp", ".html"]
+      threads: 10
+
+# OWASP Top 10 Module Settings
+owasp:
+  a01_broken_access:
+    enabled: true
+    test_idor: true
+    test_path_traversal: true
+    test_privilege_escalation: true
+  
+  a02_crypto_failures:
+    enabled: true
+    test_ssl_tls: true
+    test_cookies: true
+    test_sensitive_data: true
+  
+  a03_injection:
+    enabled: true
+    sql_injection:
+      enabled: true
+      payloads: "utils/payloads/sqli.txt"
+      time_based: true
+      error_based: true
+    nosql_injection:
+      enabled: true
+    command_injection:
+      enabled: true
+    xpath_injection:
+      enabled: true
+  
+  a04_insecure_design:
+    enabled: true
+    test_business_logic: true
+    test_rate_limiting: true
+    test_2fa_bypass: true
+  
+  a05_misconfiguration:
+    enabled: true
+    test_default_creds: true
+    test_debug_mode: true
+    test_directory_listing: true
+    test_security_headers: true
+  
+  a06_vulnerable_components:
+    enabled: true
+    cve_lookup: true
+    version_detection: true
+  
+  a07_auth_failures:
+    enabled: true
+    test_brute_force: false  # disabled by default for safety
+    test_session_management: true
+    test_jwt: true
+  
+  a08_data_integrity:
+    enabled: true
+    test_deserialization: true
+  
+  a09_logging_failures:
+    enabled: true
+    test_log_injection: true
+  
+  a10_ssrf:
+    enabled: true
+    test_internal_network: true
+    test_cloud_metadata: true
+
+# Nuclei Integration
+nuclei:
+  enabled: false  # set to true when nuclei is installed
+  templates_path: "/opt/nuclei-templates"
+  severity: ["critical", "high", "medium"]  # low, info also available
+  rate_limit: 150
+
+# WAF Detection
+waf:
+  enabled: true
+  fingerprint: true
+  bypass_attempts: false  # disabled by default
+
+# Reporting Settings
+reporting:
+  output_dir: "reports/"
+  formats: ["html", "json"]  # html, json, pdf, xml
+  include_screenshots: true
+  cvss_scoring: true
+  remediation_guidance: true
+  false_positive_filtering: true
+  confidence_threshold: 0.7  # 0.0 to 1.0
+
+# Payload Settings
+payloads:
+  validation: true  # validate payloads before marking as vulnerable
+  custom_payloads_dir: "utils/payloads/custom/"
+  encoding: ["url", "base64", "unicode"]  # encoding methods to try
+
+# Security Settings
+security:
+  respect_scope: true
+  exclude_patterns:
+    - "*/logout"
+    - "*/delete"
+    - "*/remove"
+  safe_mode: true  # prevents destructive operations
+  max_payload_size: 10240  # bytes
+
+# Logging
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR, CRITICAL
+  file: "logs/scanner.log"
+  rotation: "10 MB"
+  retention: "30 days"
+  format: "<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <cyan>{name}</cyan>:<cyan>{function}</cyan> - <level>{message}</level>"
+
+# API Settings (Optional)
+api:
+  enabled: false
+  host: "0.0.0.0"
+  port: 5000
+  auth_required: true
+  api_key: "change-this-in-production"
+
+# Notifications
+notifications:
+  enabled: false
+  slack:
+    enabled: false
+    webhook_url: ""
+  discord:
+    enabled: false
+    webhook_url: ""
+  email:
+    enabled: false
+    smtp_server: ""
+    smtp_port: 587
+    sender: ""
+    recipients: []

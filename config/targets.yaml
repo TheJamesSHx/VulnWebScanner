@@ -1,0 +1,79 @@
+# Target Configuration File
+# Define your scan targets here
+
+targets:
+  # Example: Single Target
+  - name: "Example Website"
+    url: "https://example.com"
+    scope:
+      - "*.example.com"
+      - "example.com"
+    exclude:
+      - "admin.example.com"
+    modules:
+      - "all"
+    priority: "high"
+    enabled: false
+
+  # Example: Bug Bounty Target
+  - name: "Bug Bounty Program"
+    url: "https://target.com"
+    scope:
+      - "*.target.com"
+      - "target.com"
+      - "api.target.com"
+    exclude:
+      - "staging.target.com"
+    modules:
+      - "recon"
+      - "owasp-top-10"
+    credentials:
+      username: "testuser"
+      password: "testpass"
+    headers:
+      Authorization: "Bearer token_here"
+    priority: "high"
+    enabled: false
+
+  # Example: API Target
+  - name: "REST API"
+    url: "https://api.example.com/v1"
+    type: "api"
+    scope:
+      - "api.example.com/*"
+    modules:
+      - "injection"
+      - "broken-access"
+      - "auth-failures"
+    priority: "medium"
+    enabled: false
+
+# Global Exclusions (apply to all targets)
+global_exclusions:
+  - "*/logout"
+  - "*/signout"
+  - "*/delete/*"
+  - "*/remove/*"
+  - "*/admin/drop*"
+
+# Custom Headers (apply to all targets)
+global_headers:
+  User-Agent: "VulnWebScanner/1.0"
+  Accept: "text/html,application/json"
+
+# Authentication Profiles
+auth_profiles:
+  basic_auth:
+    type: "basic"
+    username: "user"
+    password: "pass"
+  
+  bearer_token:
+    type: "bearer"
+    token: "your_token_here"
+  
+  cookie_auth:
+    type: "cookie"
+    cookies:
+      session_id: "abc123"
+      token: "xyz789"
