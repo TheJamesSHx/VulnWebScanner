@@ -1,79 +1,56 @@
 # Target Configuration File
-# Define your scan targets here
+# Define multiple targets for batch scanning
 
 targets:
-  # Example: Single Target
-  - name: "Example Website"
+  - name: "production_app"
     url: "https://example.com"
     scope:
       - "*.example.com"
-      - "example.com"
+      - "api.example.com"
     exclude:
       - "admin.example.com"
-    modules:
-      - "all"
+    authentication:
+      type: "bearer"
+      token: "${AUTH_TOKEN}"  # Use environment variable
+    rate_limit: 100  # requests per second
     priority: "high"
-    enabled: false
-
-  # Example: Bug Bounty Target
-  - name: "Bug Bounty Program"
-    url: "https://target.com"
+    
+  - name: "staging_environment"
+    url: "https://staging.example.com"
     scope:
-      - "*.target.com"
-      - "target.com"
-      - "api.target.com"
-    exclude:
-      - "staging.target.com"
-    modules:
-      - "recon"
-      - "owasp-top-10"
-    credentials:
-      username: "testuser"
-      password: "testpass"
-    headers:
-      Authorization: "Bearer token_here"
-    priority: "high"
-    enabled: false
-
-  # Example: API Target
-  - name: "REST API"
-    url: "https://api.example.com/v1"
-    type: "api"
-    scope:
-      - "api.example.com/*"
-    modules:
-      - "injection"
-      - "broken-access"
-      - "auth-failures"
+      - "staging.example.com"
+    authentication:
+      type: "basic"
+      username: "${BASIC_USER}"
+      password: "${BASIC_PASS}"
+    rate_limit: 50
     priority: "medium"
-    enabled: false
+    
+  - name: "api_gateway"
+    url: "https://api.example.com"
+    scope:
+      - "api.example.com/v1/*"
+      - "api.example.com/v2/*"
+    headers:
+      X-API-Key: "${API_KEY}"
+    rate_limit: 200
+    priority: "high"
+    
+  - name: "legacy_app"
+    url: "https://old.example.com"
+    scope:
+      - "old.example.com"
+    exclude:
+      - "old.example.com/logout"
+      - "old.example.com/delete"
+    rate_limit: 25
+    priority: "low"
+    notes: "Legacy application - scan carefully"
 
-# Global Exclusions (apply to all targets)
-global_exclusions:
-  - "*/logout"
-  - "*/signout"
-  - "*/delete/*"
-  - "*/remove/*"
-  - "*/admin/drop*"
-
-# Custom Headers (apply to all targets)
-global_headers:
-  User-Agent: "VulnWebScanner/1.0"
-  Accept: "text/html,application/json"
-
-# Authentication Profiles
-auth_profiles:
-  basic_auth:
-    type: "basic"
-    username: "user"
-    password: "pass"
-  
-  bearer_token:
-    type: "bearer"
-    token: "your_token_here"
-  
-  cookie_auth:
-    type: "cookie"
-    cookies:
-      session_id: "abc123"
-      token: "xyz789"
+# Global settings
+settings:
+  default_rate_limit: 50
+  default_timeout: 30
+  follow_redirects: true
+  verify_ssl: true
+  max_retries: 3

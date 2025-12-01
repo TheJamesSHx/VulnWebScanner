@@ -1,0 +1,138 @@
+# External Tools Configuration
+# Configure paths and settings for external pentesting tools
+
+tools:
+  # Network reconnaissance
+  nmap:
+    enabled: true
+    path: "/usr/bin/nmap"
+    args: "-sV -sC --script=vuln -T4"
+    timeout: 600
+    
+  masscan:
+    enabled: true
+    path: "/usr/bin/masscan"
+    args: "--rate 1000 -p0-65535"
+    timeout: 300
+    
+  # Web reconnaissance
+  nikto:
+    enabled: true
+    path: "/usr/bin/nikto"
+    args: "-Tuning 123bde -C all"
+    timeout: 900
+    
+  whatweb:
+    enabled: true
+    path: "/usr/bin/whatweb"
+    args: "-a 3 --color=never"
+    timeout: 120
+    
+  wafw00f:
+    enabled: true
+    path: "/usr/bin/wafw00f"
+    args: "-a"
+    timeout: 60
+    
+  # Content discovery
+  ffuf:
+    enabled: true
+    path: "/usr/bin/ffuf"
+    wordlist: "/usr/share/seclists/Discovery/Web-Content/raft-large-directories.txt"
+    args: "-mc all -fc 404 -t 50 -rate 100"
+    timeout: 600
+    
+  gobuster:
+    enabled: true
+    path: "/usr/bin/gobuster"
+    wordlist: "/usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt"
+    args: "dir -t 50 -k"
+    timeout: 600
+    
+  feroxbuster:
+    enabled: true
+    path: "/usr/bin/feroxbuster"
+    wordlist: "/usr/share/seclists/Discovery/Web-Content/raft-medium-directories.txt"
+    args: "-t 50 --auto-bail --smart"
+    timeout: 600
+    
+  # Vulnerability scanning
+  nuclei:
+    enabled: true
+    path: "/usr/bin/nuclei"
+    templates: "/root/nuclei-templates/"
+    args: "-severity critical,high,medium -rate-limit 150"
+    timeout: 1200
+    
+  sqlmap:
+    enabled: true
+    path: "/usr/bin/sqlmap"
+    args: "--batch --random-agent --level 3 --risk 2"
+    timeout: 900
+    
+  xsstrike:
+    enabled: true
+    path: "/opt/XSStrike/xsstrike.py"
+    args: "--crawl"
+    timeout: 600
+    
+  dalfox:
+    enabled: true
+    path: "/usr/bin/dalfox"
+    args: "--skip-bav --only-poc"
+    timeout: 300
+    
+  # SSL/TLS testing
+  testssl:
+    enabled: true
+    path: "/usr/bin/testssl.sh"
+    args: "--parallel --warnings batch"
+    timeout: 300
+    
+  sslscan:
+    enabled: true
+    path: "/usr/bin/sslscan"
+    args: "--no-failed"
+    timeout: 120
+    
+  # Subdomain enumeration
+  subfinder:
+    enabled: true
+    path: "/usr/bin/subfinder"
+    args: "-all -recursive"
+    timeout: 300
+    
+  assetfinder:
+    enabled: true
+    path: "/usr/bin/assetfinder"
+    args: "--subs-only"
+    timeout: 120
+    
+  amass:
+    enabled: true
+    path: "/usr/bin/amass"
+    args: "enum -passive -timeout 10"
+    timeout: 600
+    
+  # HTTP analysis
+  httpx:
+    enabled: true
+    path: "/usr/bin/httpx"
+    args: "-silent -status-code -tech-detect -title"
+    timeout: 300
+    
+  # Fuzzing
+  wfuzz:
+    enabled: true
+    path: "/usr/bin/wfuzz"
+    wordlist: "/usr/share/seclists/Fuzzing/special-chars.txt"
+    args: "-t 50 --hc 404"
+    timeout: 600
+
+# Global tool settings
+settings:
+  user_agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+  max_concurrent_tools: 5
+  retry_failed: true
+  save_raw_output: true
+  output_format: "json"
